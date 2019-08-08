@@ -55,14 +55,9 @@
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
-import Tournament from '@/components/Tournament.vue'
 
-@Component({
-  components: {
-    Tournament,
-  },
-})
-export default class Home extends Vue {
+@Component({})
+export default class Tournament extends Vue {
   test: number = 1
   panels = [
     { routeName: 'panel1', label: 'Panel1', icon: 'mdi-phone' },
