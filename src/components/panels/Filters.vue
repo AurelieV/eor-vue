@@ -1,3 +1,3 @@
 <template>
-  <div>Panel2</div>
+  <div>Filters</div>
 </template>

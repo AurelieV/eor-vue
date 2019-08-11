@@ -1,3 +1,3 @@
 <template>
-  <div>Panel1</div>
+  <div>Chat</div>
 </template>

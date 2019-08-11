@@ -1,6 +1,6 @@
 <template>
   <v-app id="app">
-    <v-app-bar app clipped-left clipped-right color="primary" dark>
+    <v-app-bar app clipped-left clipped-right color="primary" dense dark>
       <v-app-bar-nav-icon
         @click.stop="navigationPanel = !navigationPanel"
         :disabled="isHeaderDisabled"
@@ -13,12 +13,13 @@
           isHeaderDisabled: isHeaderDisabled,
           isRightPanelAlwaysOpen: isRightPanelAlwaysOpen,
         }"
+        class="header"
       >
         <v-toolbar-title>PurpleFox - EoR</v-toolbar-title>
       </portal-target>
-      <v-spacer></v-spacer>
       <portal-target
         name="header-actions"
+        class="header-actions"
         :slot-props="{
           isHeaderDisabled: isHeaderDisabled,
           isRightPanelAlwaysOpen: isRightPanelAlwaysOpen,
@@ -50,7 +51,7 @@
       <v-list-item>
         <v-list-item-content>
           <v-list-item-title class="title">
-            Purple Fox
+            <portal-target name="nav-title">Purple Fox</portal-target>
           </v-list-item-title>
           <v-list-item-subtitle>
             <template v-if="user">
@@ -195,5 +196,19 @@ export default class Main extends Vue {
   top: 0.5rem;
   right: 0.5rem;
   z-index: 10;
+}
+.header {
+  flex: 1 1 auto;
+  justify-content: flex-end;
+  @include responsive-block('md') {
+    margin-left: -48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+}
+.header-actions {
+  display: flex;
+  align-items: center;
 }
 </style>

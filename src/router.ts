@@ -3,8 +3,9 @@ import Router from 'vue-router'
 import Main from './views/Main.vue'
 import Tournament from './views/Tournament.vue'
 import TournamentList from './views/TournamentList.vue'
-import Panel1 from './components/panels/Panel1.vue'
-import Panel2 from './components/panels/Panel2.vue'
+import Actions from './components/panels/Actions.vue'
+import Chat from './components/panels/Chat.vue'
+import Filters from './components/panels/Filters.vue'
 
 Vue.use(Router)
 
@@ -33,23 +34,33 @@ export default new Router({
           },
           children: [
             {
-              path: '/panel1',
-              name: 'panel1',
+              path: 'actions',
+              name: 'actions',
               components: {
-                panel: Panel1,
+                panel: Actions,
               },
               meta: {
-                panel: 'panel1',
+                panel: 'actions',
               },
             },
             {
-              path: '/panel2',
-              name: 'panel2',
+              path: 'chat',
+              name: 'chat',
               components: {
-                panel: Panel2,
+                panel: Chat,
               },
               meta: {
-                panel: 'panel2',
+                panel: 'chat',
+              },
+            },
+            {
+              path: 'filters',
+              name: 'filters',
+              components: {
+                panel: Filters,
+              },
+              meta: {
+                panel: 'filters',
               },
             },
           ],
