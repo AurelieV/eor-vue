@@ -44,7 +44,12 @@
             Purple Fox
           </v-list-item-title>
           <v-list-item-subtitle>
-            Your are not connected
+            <template v-if="user">
+              Connected as {{ user | user }}
+            </template>
+            <template v-else
+              >Your are not connected</template
+            >
           </v-list-item-subtitle>
         </v-list-item-content>
       </v-list-item>
@@ -58,6 +63,17 @@
           <v-list-item-content>
             <v-list-item-title>{{ name }}</v-list-item-title>
           </v-list-item-content>
+        </v-list-item>
+      </v-list>
+      <v-divider></v-divider>
+      <v-list dense>
+        <v-list-item link @click.stop="logout()">
+          <v-list-item-content>
+            <v-list-item-title color="secondary">Logout</v-list-item-title>
+          </v-list-item-content>
+          <v-list-item-icon>
+            <v-icon>mdi-logout</v-icon>
+          </v-list-item-icon>
         </v-list-item>
       </v-list>
     </v-navigation-drawer>
@@ -136,8 +152,22 @@ export default class Main extends Vue {
     return !this.isRightPanelAlwaysOpen && this.isRightPanelOpen
   }
 
+  get user() {
+    return this.$store.state.auth.user
+  }
+
   closeRightPanel() {
     this.$router.back()
+  }
+
+  async logout() {
+    try {
+      await this.$auth.logout()
+      this.navigationPanel = false
+      this.$router.push({ name: 'login' })
+    } catch (err) {
+      console.log('err', err) // TODO notifications
+    }
   }
 }
 </script>

@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 import { vuexfireMutations, firebaseAction } from 'vuexfire'
-import { db } from '@/db'
+import { db } from '@/firebase'
 
 Vue.use(Vuex)
 

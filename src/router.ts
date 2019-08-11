@@ -15,6 +15,9 @@ export default new Router({
       path: '/',
       name: 'main',
       component: Main,
+      meta: {
+        auth: true,
+      },
       children: [
         {
           path: '/tournament',
@@ -52,6 +55,12 @@ export default new Router({
       path: '/login',
       name: 'login',
       component: () => import(/* webpackChunkName: "login" */ './views/Login.vue'),
+    },
+    {
+      path: '/authent-redirect',
+      name: 'authent-redirect',
+      component: () =>
+        import(/* webpackChunkName: "authent-redirect" */ './views/AuthenticationRedirect.vue'),
     },
   ],
 })

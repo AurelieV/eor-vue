@@ -18,7 +18,7 @@
             </p>
 
             <div class="actions">
-              <v-btn color="primary" type="submit" :loading="isLoading">
+              <v-btn color="primary" type="submit" :loading="isLoading" @click="login">
                 Sure, connect me !
               </v-btn>
             </div>
@@ -36,6 +36,11 @@ import Component from 'vue-class-component'
 @Component
 export default class Login extends Vue {
   isLoading: boolean = false
+
+  login() {
+    this.isLoading = true
+    this.$auth.loginWithJudgeApps()
+  }
 }
 </script>
 
