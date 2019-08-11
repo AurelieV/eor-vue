@@ -39,6 +39,7 @@ export const AuthenticatePlugin: PluginObject<AuthenticatePluginOptions> = {
     }
 
     store.registerModule<UserState>('auth', {
+      namespaced: true,
       state: {
         uid: undefined,
         user: undefined,
@@ -79,7 +80,7 @@ export const AuthenticatePlugin: PluginObject<AuthenticatePluginOptions> = {
       },
     })
     auth.onAuthStateChanged(user => {
-      store.dispatch('updateUser', user)
+      store.dispatch('auth/updateUser', user)
     })
 
     const authInitialized = new Promise(resolve => {

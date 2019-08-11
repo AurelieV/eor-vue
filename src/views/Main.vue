@@ -7,15 +7,24 @@
       >
         <v-icon>{{ menuIcon }}</v-icon>
       </v-app-bar-nav-icon>
-      <v-toolbar-title>Toolbar</v-toolbar-title>
-      <v-spacer></v-spacer>
       <portal-target
         name="header"
         :slot-props="{
           isHeaderDisabled: isHeaderDisabled,
           isRightPanelAlwaysOpen: isRightPanelAlwaysOpen,
         }"
-      ></portal-target>
+      >
+        <v-toolbar-title>PurpleFox - EoR</v-toolbar-title>
+      </portal-target>
+      <v-spacer></v-spacer>
+      <portal-target
+        name="header-actions"
+        :slot-props="{
+          isHeaderDisabled: isHeaderDisabled,
+          isRightPanelAlwaysOpen: isRightPanelAlwaysOpen,
+        }"
+      >
+      </portal-target>
     </v-app-bar>
     <v-navigation-drawer
       v-model="navigationPanel"
@@ -116,13 +125,21 @@
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
+import { START_SYNCHRO, STOP_SYNCHRO } from '@/store'
 
 @Component({})
 export default class Main extends Vue {
   navigationPanel: boolean = false
   navigationLinks = {
     Homepage: { to: '/' },
-    About: { to: '/about' },
+  }
+
+  mounted() {
+    this.$store.dispatch(START_SYNCHRO)
+  }
+
+  destroyed() {
+    this.$store.dispatch(STOP_SYNCHRO)
   }
 
   get menuIcon() {

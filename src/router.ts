@@ -2,6 +2,7 @@ import Vue from 'vue'
 import Router from 'vue-router'
 import Main from './views/Main.vue'
 import Tournament from './views/Tournament.vue'
+import TournamentList from './views/TournamentList.vue'
 import Panel1 from './components/panels/Panel1.vue'
 import Panel2 from './components/panels/Panel2.vue'
 
@@ -13,15 +14,19 @@ export default new Router({
   routes: [
     {
       path: '/',
-      name: 'main',
       component: Main,
       meta: {
         auth: true,
       },
       children: [
         {
-          path: '/tournament',
-          name: 'tounament',
+          path: '/',
+          name: 'main',
+          component: TournamentList,
+        },
+        {
+          path: '/tournament/:tournamentKey',
+          name: 'tournament',
           component: Tournament,
           meta: {
             withPanel: true,

@@ -1,12 +1,5 @@
 <template>
-  <div class="home">
-    <ul>
-      <li><router-link :to="{ name: 'panel1' }">Panel1</router-link></li>
-      <li><router-link :to="{ name: 'panel2' }">Panel2</router-link></li>
-      <li><router-link :to="{ name: 'home' }">Home</router-link></li>
-    </ul>
-    {{ test }}
-    <button @click="test = test + 1">Increment</button>
+  <div class="tournament">
     <portal to="rightPanel">
       <template slot-scope="locales">
         <v-tabs
@@ -34,7 +27,7 @@
         <router-view name="panel" />
       </template>
     </portal>
-    <portal to="header">
+    <portal to="header-actions">
       <template slot-scope="locales">
         <template v-if="!locales.isRightPanelAlwaysOpen">
           <v-btn
@@ -58,7 +51,6 @@ import { Component, Vue } from 'vue-property-decorator'
 
 @Component({})
 export default class Tournament extends Vue {
-  test: number = 1
   panels = [
     { routeName: 'panel1', label: 'Panel1', icon: 'mdi-phone' },
     { routeName: 'panel2', label: 'Panel2', icon: 'mdi-phone' },

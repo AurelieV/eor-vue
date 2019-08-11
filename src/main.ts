@@ -3,13 +3,16 @@ import App from './App.vue'
 import router from './router'
 import store from './store'
 import vuetify from './plugins/vuetify'
+import VueDateFns from 'vue-date-fns'
+
 // import "./registerServiceWorker";
 import PortalVue from 'portal-vue'
 import { AuthenticatePlugin } from '@/plugins/authentication'
 import { auth } from './firebase'
 import { authenticateSettings, authenticateUrl } from '@/config'
-import userFilter from './filters/user.filter'
+import { userFilter, userListFilter } from './filters/user.filter'
 
+Vue.use(VueDateFns)
 Vue.use(PortalVue)
 Vue.use(AuthenticatePlugin, {
   auth,
@@ -23,6 +26,7 @@ Vue.config.productionTip = false
 
 // Filters
 Vue.filter('user', userFilter)
+Vue.filter('userList', userListFilter)
 
 new Vue({
   router,
