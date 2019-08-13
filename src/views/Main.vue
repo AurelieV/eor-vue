@@ -121,14 +121,18 @@
         }"
       ></portal-target>
     </v-navigation-drawer>
+    <Notifications></Notifications>
   </v-app>
 </template>
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
-import { START_SYNCHRO, STOP_SYNCHRO } from '@/store'
+import { START_SYNCHRO, STOP_SYNCHRO, PUSH_NOTIFICATION } from '@/store'
+import Notifications from '@/components/Notifications'
 
-@Component({})
+@Component({
+  components: { Notifications },
+})
 export default class Main extends Vue {
   navigationPanel: boolean = false
   navigationLinks = {
@@ -183,8 +187,9 @@ export default class Main extends Vue {
       await this.$auth.logout()
       this.navigationPanel = false
       this.$router.push({ name: 'login' })
+      this.$store.dispatch(PUSH_NOTIFICATION, { message: 'Logout successfull', type: 'success' })
     } catch (err) {
-      console.log('err', err) // TODO notifications
+      this.$store.dispatch(PUSH_NOTIFICATION, { message: 'Logout failed', type: 'error' })
     }
   }
 }

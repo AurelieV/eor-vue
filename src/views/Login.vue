@@ -26,14 +26,20 @@
         </div>
       </section>
     </div>
+    <Notifications />
   </v-app>
 </template>
 
 <script lang="ts">
 import Vue from 'vue'
 import Component from 'vue-class-component'
+import Notifications from '@/components/Notifications'
 
-@Component
+@Component({
+  components: {
+    Notifications,
+  },
+})
 export default class Login extends Vue {
   isLoading: boolean = false
 

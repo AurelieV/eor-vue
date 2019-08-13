@@ -6,6 +6,6 @@
 import { Component, Vue } from 'vue-property-decorator'
 import '@/styles/reset.scss'
 
-@Component
+@Component({})
 export default class App extends Vue {}
 </script>

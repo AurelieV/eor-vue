@@ -29,7 +29,7 @@
     </portal>
     <portal to="header-actions">
       <template slot-scope="locales">
-        <v-btn flat small text>
+        <v-btn small text>
           50:00
         </v-btn>
         <v-btn icon tile :disabled="locales.isHeaderDisabled" color="white">

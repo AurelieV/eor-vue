@@ -9,12 +9,22 @@ Vue.use(Vuex)
 export const START_SYNCHRO = 'Start synchro'
 export const STOP_SYNCHRO = 'Stop synchro'
 export const SELECT_TOURNAMENT = 'Select tournament'
+export const ADD_NOTIFICATION = 'Add notification action'
+export const REMOVE_NOTIFICATION = 'Remove notification'
+export const PUSH_NOTIFICATION = 'Push notification'
 
+export interface Notification {
+  message: string
+  type: string
+  id: number
+}
 export interface RootState {
   tournaments: Array<any>
   selectedTournament: any
   zones: Array<any>
   staffs: { [key: string]: TournamentStaff }
+  notifications: Notification[]
+  notificationId: number
 }
 export default new Vuex.Store<RootState>({
   state: {
@@ -22,6 +32,8 @@ export default new Vuex.Store<RootState>({
     selectedTournament: null,
     zones: [],
     staffs: {},
+    notifications: [],
+    notificationId: 0,
   },
   mutations: {
     setSelected(state, tournament) {
@@ -31,6 +43,13 @@ export default new Vuex.Store<RootState>({
       state.tournaments = []
     },
     ...vuexfireMutations,
+    [REMOVE_NOTIFICATION](state, id) {
+      state.notifications = state.notifications.filter(n => n.id !== id)
+    },
+    [ADD_NOTIFICATION](state, notif) {
+      state.notifications.push({ ...notif, id: state.notificationId })
+      state.notificationId = state.notificationId + 1
+    },
   },
   actions: {
     [START_SYNCHRO]: firebaseAction(async ({ bindFirebaseRef }) => {
@@ -47,5 +66,12 @@ export default new Vuex.Store<RootState>({
       commit('setSelected', tournament)
       return bindFirebaseRef('zones', db.ref(`zoneTables/${tournament['.key']}`))
     }),
+    async [PUSH_NOTIFICATION]({ commit, state }, notif) {
+      const notifId = state.notificationId
+      commit(ADD_NOTIFICATION, notif)
+      setTimeout(() => {
+        commit(REMOVE_NOTIFICATION, notifId)
+      }, 2000)
+    },
   },
 })

@@ -13,6 +13,7 @@
         </v-layout>
       </v-container>
     </v-content>
+    <Notifications />
   </v-app>
 </template>
 
@@ -20,15 +21,26 @@
 import Vue from 'vue'
 import Component from 'vue-class-component'
 import { Watch } from 'vue-property-decorator'
+import Notifications from '@/components/Notifications'
+import { PUSH_NOTIFICATION } from '@/store'
 
-@Component
+@Component({
+  components: {
+    Notifications,
+  },
+})
 export default class AuthenticationRedirect extends Vue {
   @Watch('$route.query.code', { immediate: true })
   async handleCode(code: string) {
     try {
       await this.$auth.processJudgeAppsToken(code)
+      this.$store.dispatch(PUSH_NOTIFICATION, {
+        message: 'Authentification successfull',
+        type: 'success',
+      })
       this.$router.push({ name: 'main' })
     } catch (err) {
+      this.$store.dispatch(PUSH_NOTIFICATION, { message: 'Authentification failed', type: 'error' })
       this.$router.push({ name: 'login' })
     }
   }
