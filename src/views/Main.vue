@@ -128,7 +128,7 @@
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
 import { START_SYNCHRO, STOP_SYNCHRO, PUSH_NOTIFICATION } from '@/store'
-import Notifications from '@/components/Notifications'
+import Notifications from '@/components/Notifications.vue'
 
 @Component({
   components: { Notifications },

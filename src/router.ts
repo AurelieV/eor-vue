@@ -6,6 +6,7 @@ import TournamentList from './views/TournamentList.vue'
 import Actions from './components/panels/Actions.vue'
 import Chat from './components/panels/Chat.vue'
 import Filters from './components/panels/Filters.vue'
+import ClockActions from './components/panels/ClockActions.vue'
 
 Vue.use(Router)
 
@@ -42,6 +43,16 @@ export default new Router({
               meta: {
                 panel: 'actions',
               },
+              children: [
+                {
+                  path: 'clock',
+                  name: 'clock-actions',
+                  meta: {
+                    panel: 'actions',
+                    modal: ClockActions,
+                  },
+                },
+              ],
             },
             {
               path: 'chat',

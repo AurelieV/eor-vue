@@ -24,12 +24,14 @@
             <v-icon>{{ panel.icon }}</v-icon>
           </v-tab>
         </v-tabs>
-        <router-view name="panel" />
+        <div class="panel-content">
+          <router-view name="panel" />
+        </div>
       </template>
     </portal>
     <portal to="header-actions">
       <template slot-scope="locales">
-        <v-btn small text>
+        <v-btn small text :disabled="locales.isHeaderDisabled" :to="{ name: 'clock-actions' }">
           50:00
         </v-btn>
         <v-btn icon tile :disabled="locales.isHeaderDisabled" color="white">
@@ -100,3 +102,9 @@ export default class Tournament extends Vue {
   }
 }
 </script>
+
+<style lang="scss">
+.panel-content {
+  padding: 1rem;
+}
+</style>

@@ -13,15 +13,10 @@
 import { Component, Prop, Vue } from 'vue-property-decorator'
 import Table from '@/components/Table.vue'
 
-import { INIT_DATA, SELECT_TOURNAMENT } from '@/store'
-
 @Component({
   components: { Table },
 })
 export default class HelloWorld extends Vue {
-  mounted() {
-    this.$store.dispatch(INIT_DATA)
-  }
   get tournaments() {
     return this.$store.state.tournaments
   }
@@ -33,10 +28,6 @@ export default class HelloWorld extends Vue {
 
   get nbPlaying() {
     return this.tables.filter((t: any) => t.status === 'done').length
-  }
-
-  selectTournament(tournament: any) {
-    this.$store.dispatch(SELECT_TOURNAMENT, tournament)
   }
 }
 </script>

@@ -33,7 +33,7 @@
 <script lang="ts">
 import Vue from 'vue'
 import Component from 'vue-class-component'
-import Notifications from '@/components/Notifications'
+import Notifications from '@/components/Notifications.vue'
 
 @Component({
   components: {

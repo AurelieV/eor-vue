@@ -21,7 +21,7 @@
 import Vue from 'vue'
 import Component from 'vue-class-component'
 import { Watch } from 'vue-property-decorator'
-import Notifications from '@/components/Notifications'
+import Notifications from '@/components/Notifications.vue'
 import { PUSH_NOTIFICATION } from '@/store'
 
 @Component({
