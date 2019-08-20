@@ -2,7 +2,7 @@ import Vue from 'vue'
 import Vuex from 'vuex'
 import { vuexfireMutations, firebaseAction } from 'vuexfire'
 import { db } from '@/firebase'
-import { TournamentStaff } from '@/models'
+import { TournamentStaff, Tournament } from '@/models'
 
 Vue.use(Vuex)
 
@@ -12,6 +12,8 @@ export const SELECT_TOURNAMENT = 'Select tournament'
 export const ADD_NOTIFICATION = 'Add notification action'
 export const REMOVE_NOTIFICATION = 'Remove notification'
 export const PUSH_NOTIFICATION = 'Push notification'
+export const TOGGLE_IS_DETAILS_DISPLAYED = 'Toggle show details'
+export const DESELECT_TOURNAMENT = 'Deselect tournament'
 
 export interface Notification {
   message: string
@@ -20,27 +22,38 @@ export interface Notification {
 }
 export interface RootState {
   tournaments: Array<any>
-  selectedTournament: any
+  tournament: Tournament | null
   zones: Array<any>
   staffs: { [key: string]: TournamentStaff }
   notifications: Notification[]
   notificationId: number
+  endTime: number | null
+  ui: {
+    isDetailsDisplayed: boolean
+  }
 }
 export default new Vuex.Store<RootState>({
   state: {
     tournaments: [],
-    selectedTournament: null,
+    tournament: null,
     zones: [],
     staffs: {},
     notifications: [],
     notificationId: 0,
+    endTime: null,
+    ui: {
+      isDetailsDisplayed: false,
+    },
   },
   mutations: {
-    setSelected(state, tournament) {
-      state.selectedTournament = tournament
-    },
     reset(state) {
       state.tournaments = []
+      state.staffs = {}
+    },
+    resetTournament(state) {
+      state.tournament = null
+      state.endTime = null
+      state.zones = []
     },
     ...vuexfireMutations,
     [REMOVE_NOTIFICATION](state, id) {
@@ -49,6 +62,9 @@ export default new Vuex.Store<RootState>({
     [ADD_NOTIFICATION](state, notif) {
       state.notifications.push({ ...notif, id: state.notificationId })
       state.notificationId = state.notificationId + 1
+    },
+    [TOGGLE_IS_DETAILS_DISPLAYED](state) {
+      state.ui.isDetailsDisplayed = !state.ui.isDetailsDisplayed
     },
   },
   actions: {
@@ -62,9 +78,20 @@ export default new Vuex.Store<RootState>({
       await Promise.all([unbindFirebaseRef('tournaments'), unbindFirebaseRef('staffs')])
       commit('reset')
     }),
-    [SELECT_TOURNAMENT]: firebaseAction(({ bindFirebaseRef, commit }, tournament) => {
-      commit('setSelected', tournament)
-      return bindFirebaseRef('zones', db.ref(`zoneTables/${tournament['.key']}`))
+    [SELECT_TOURNAMENT]: firebaseAction(async ({ bindFirebaseRef }, key) => {
+      await Promise.all([
+        bindFirebaseRef('tournament', db.ref(`tournaments/${key}`)),
+        bindFirebaseRef('zones', db.ref(`zoneTables/${key}`)),
+        bindFirebaseRef('endTime', db.ref(`endTime/${key}`)),
+      ])
+    }),
+    [DESELECT_TOURNAMENT]: firebaseAction(async ({ unbindFirebaseRef, commit }) => {
+      await Promise.all([
+        unbindFirebaseRef('tournament'),
+        unbindFirebaseRef('zones'),
+        unbindFirebaseRef('endTime'),
+      ])
+      commit('resetTournament')
     }),
     async [PUSH_NOTIFICATION]({ commit, state }, notif) {
       const notifId = state.notificationId

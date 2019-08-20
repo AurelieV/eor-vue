@@ -34,8 +34,8 @@
         <v-btn small text :disabled="locales.isHeaderDisabled" :to="{ name: 'clock-actions' }">
           50:00
         </v-btn>
-        <v-btn icon tile :disabled="locales.isHeaderDisabled" color="white">
-          <v-icon>{{ isDetailsDisplayed ? 'mdi-view-sequential' : 'mdi-view-comfy' }}</v-icon>
+        <v-btn icon tile :disabled="locales.isHeaderDisabled" color="white" @click="toggleDetails">
+          <v-icon>{{ isDetailsDisplayed ? 'mdi-view-comfy' : 'mdi-view-sequential' }}</v-icon>
         </v-btn>
         <template v-if="!locales.isRightPanelAlwaysOpen">
           <v-btn
@@ -62,10 +62,15 @@
 <script lang="ts">
 import { Component, Vue, Watch } from 'vue-property-decorator'
 import { db } from '@/firebase'
+import { TOGGLE_IS_DETAILS_DISPLAYED, SELECT_TOURNAMENT, DESELECT_TOURNAMENT } from '@/store'
 
 @Component({})
 export default class Tournament extends Vue {
-  tournament: Tournament | {} = {}
+  mounted() {
+    if (this.$vuetify.breakpoint.mdAndUp && this.$route.name === 'tournament') {
+      this.$router.replace({ name: 'actions' })
+    }
+  }
 
   get panels() {
     return [
@@ -88,17 +93,32 @@ export default class Tournament extends Vue {
   }
 
   get isDetailsDisplayed() {
-    return false
+    return this.$store.state.ui.isDetailsDisplayed
   }
 
   get panel() {
     return this.$route.meta.panel || 'panel1'
   }
 
+  get tournament() {
+    return this.$store.state.tournament
+  }
+
   @Watch('$route.params.tournamentKey', { immediate: true })
   fetchTournament(key: string) {
-    //TODO: move this to store
-    this.$rtdbBind('tournament', db.ref('tournaments').child(key))
+    if (key) {
+      this.$store.dispatch(SELECT_TOURNAMENT, key)
+    } else {
+      this.$store.dispatch(DESELECT_TOURNAMENT, key)
+    }
+  }
+
+  toggleDetails() {
+    this.$store.commit(TOGGLE_IS_DETAILS_DISPLAYED)
+  }
+
+  destroyed() {
+    this.$store.dispatch(DESELECT_TOURNAMENT)
   }
 }
 </script>
