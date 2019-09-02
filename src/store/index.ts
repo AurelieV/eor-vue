@@ -3,6 +3,7 @@ import Vuex from 'vuex'
 import { vuexfireMutations, firebaseAction } from 'vuexfire'
 import { db } from '@/firebase'
 import { TournamentStaff, Tournament } from '@/models'
+import { getTime, addMinutes, addSeconds } from 'date-fns'
 
 Vue.use(Vuex)
 
@@ -14,6 +15,8 @@ export const REMOVE_NOTIFICATION = 'Remove notification'
 export const PUSH_NOTIFICATION = 'Push notification'
 export const TOGGLE_IS_DETAILS_DISPLAYED = 'Toggle show details'
 export const DESELECT_TOURNAMENT = 'Deselect tournament'
+export const START_CLOCK = 'Start clock'
+export const RESTART_CLOCK = 'Restart clock'
 
 export interface Notification {
   message: string
@@ -40,7 +43,7 @@ export default new Vuex.Store<RootState>({
     staffs: {},
     notifications: [],
     notificationId: 0,
-    endTime: null,
+    endTime: 0,
     ui: {
       isDetailsDisplayed: false,
     },
@@ -82,7 +85,11 @@ export default new Vuex.Store<RootState>({
       await Promise.all([
         bindFirebaseRef('tournament', db.ref(`tournaments/${key}`)),
         bindFirebaseRef('zones', db.ref(`zoneTables/${key}`)),
-        bindFirebaseRef('endTime', db.ref(`endTime/${key}`)),
+        bindFirebaseRef('endTime', db.ref(`endTime/${key}`), {
+          serialize(snapshot) {
+            return snapshot.val()
+          },
+        }),
       ])
     }),
     [DESELECT_TOURNAMENT]: firebaseAction(async ({ unbindFirebaseRef, commit }) => {
@@ -93,6 +100,17 @@ export default new Vuex.Store<RootState>({
       ])
       commit('resetTournament')
     }),
+    async [START_CLOCK]({ state }, { minutes = 50, seconds = 0 } = {}) {
+      if (!state.tournament) return
+      const key = state.tournament['.key']
+      const time = getTime(addSeconds(addMinutes(new Date(), minutes), seconds))
+      await db.ref(`endTime/${key}`).set(time)
+    },
+    async [RESTART_CLOCK]({ state }) {
+      if (!state.tournament) return
+      const key = state.tournament['.key']
+      await db.ref(`endTime/${key}`).remove()
+    },
     async [PUSH_NOTIFICATION]({ commit, state }, notif) {
       const notifId = state.notificationId
       commit(ADD_NOTIFICATION, notif)

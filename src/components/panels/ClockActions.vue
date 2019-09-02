@@ -46,14 +46,16 @@
 <script lang="ts">
 import Vue from 'vue'
 import { Component } from 'vue-property-decorator'
+import { START_CLOCK, RESTART_CLOCK } from '../../store'
 
 @Component
 export default class Actions extends Vue {
   minutes: number = 50
   seconds: number = 0
   form = true
-  minutesRules = [v => v >= 0 || `You must defined a positive value`]
+  minutesRules = [v => Boolean(v && v >= 0) || `You must defined a positive value`]
   secondesRules = [
+    v => Boolean(v || v === 0) || `You must defined a positive value`,
     v => v >= 0 || `You must defined a positive value`,
     v => v < 60 || `Value must be under 60`,
   ]
@@ -62,12 +64,13 @@ export default class Actions extends Vue {
     return this.$router.back()
   }
 
-  reset() {
-    //TODO: call store
+  async reset() {
+    await this.$store.dispatch(RESTART_CLOCK)
   }
 
-  start() {
-    //TODO call store
+  async start() {
+    await this.$store.dispatch(START_CLOCK, { seconds: this.seconds, minutes: this.minutes })
+    this.cancel()
   }
 }
 </script>

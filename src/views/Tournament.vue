@@ -32,7 +32,7 @@
     <portal to="header-actions">
       <template slot-scope="locales">
         <v-btn small text :disabled="locales.isHeaderDisabled" :to="{ name: 'clock-actions' }">
-          50:00
+          {{ clock }}
         </v-btn>
         <v-btn icon tile :disabled="locales.isHeaderDisabled" color="white" @click="toggleDetails">
           <v-icon>{{ isDetailsDisplayed ? 'mdi-view-comfy' : 'mdi-view-sequential' }}</v-icon>
@@ -53,9 +53,10 @@
       </template>
     </portal>
     <portal to="header">
-      <span class="hidden-sm-and-down">{{ tournament.name }}</span>
+      <span class="hidden-sm-and-down">{{ tournament && tournament.name }}</span>
     </portal>
-    <portal to="nav-title" v-if="tournament">{{ tournament.name }}</portal>
+    <portal to="nav-title">{{ tournament && tournament.name }}</portal>
+    <Overview></Overview>
   </div>
 </template>
 
@@ -63,9 +64,18 @@
 import { Component, Vue, Watch } from 'vue-property-decorator'
 import { db } from '@/firebase'
 import { TOGGLE_IS_DETAILS_DISPLAYED, SELECT_TOURNAMENT, DESELECT_TOURNAMENT } from '@/store'
+import Overview from '@/components/Overview.vue'
+import { differenceInMinutes, differenceInSeconds, isBefore } from 'date-fns'
 
-@Component({})
+@Component({
+  components: {
+    Overview,
+  },
+})
 export default class Tournament extends Vue {
+  clockListener: number | null = null
+  clock: String = '50:00'
+
   mounted() {
     if (this.$vuetify.breakpoint.mdAndUp && this.$route.name === 'tournament') {
       this.$router.replace({ name: 'actions' })
@@ -104,6 +114,10 @@ export default class Tournament extends Vue {
     return this.$store.state.tournament
   }
 
+  get endTime() {
+    return this.$store.state.endTime
+  }
+
   @Watch('$route.params.tournamentKey', { immediate: true })
   fetchTournament(key: string) {
     if (key) {
@@ -113,12 +127,47 @@ export default class Tournament extends Vue {
     }
   }
 
+  @Watch('endTime', { immediate: true })
+  animateClock(endTime: number | null) {
+    if (this.clockListener && !this.endTime) {
+      window.clearInterval(this.clockListener)
+      this.clock = '50:00'
+      this.clockListener = null
+    }
+    if (this.endTime && !this.clockListener) {
+      this.clockListener = window.setInterval(this.updateClock.bind(this), 1000)
+    }
+  }
+
+  updateClock() {
+    if (!this.endTime) {
+      this.clock = '50:00'
+      return
+    }
+    const now = new Date()
+    const end = new Date(this.endTime)
+    if (isBefore(now, end)) {
+      const diff = differenceInSeconds(end, now)
+      const seconds = diff % 60
+      const minutes = Math.floor(diff / 60)
+      this.clock = `${minutes < 10 ? '0' : ''}${minutes}:${seconds < 10 ? '0' : ''}${seconds}`
+    } else {
+      const diff = differenceInSeconds(now, end)
+      const seconds = diff % 60
+      const minutes = Math.floor(diff / 60)
+      this.clock = `-${minutes < 10 ? '0' : ''}${minutes}:${seconds < 10 ? '0' : ''}${seconds}`
+    }
+  }
+
   toggleDetails() {
     this.$store.commit(TOGGLE_IS_DETAILS_DISPLAYED)
   }
 
   destroyed() {
     this.$store.dispatch(DESELECT_TOURNAMENT)
+    if (this.clockListener) {
+      window.clearInterval(this.clockListener)
+    }
   }
 }
 </script>
